@@ -3,21 +3,24 @@ package gounosx
 // AuthorizationOption ...
 type AuthorizationOption uint8
 
+// Authorization options
 const (
 	_ AuthorizationOption = iota
+	AuthorizationOptionAlert
+	AuthorizationOptionBadge
+	AuthorizationOptionSound
 )
 
 // Notifier ...
-type Notifier struct {
-}
+type Notifier struct {}
 
-// RequestPermission ...
-func (n *Notifier) RequestPermission(option ...AuthorizationOption) (bool, error) {
-	C.requestAuthorization();
+// RequestAuthorization ...
+func (*Notifier) RequestAuthorization(options ...AuthorizationOption) (bool, error) {
+	return requestAuthorization(options...)
 }
 
 // AuthorizationStatus ...
-func (n *Notifier) AuthorizationStatus() (bool, []AuthorizationOption) {
+func (*Notifier) AuthorizationStatus() (bool, []AuthorizationOption) {
 	panic("not implemented")
 }
 
