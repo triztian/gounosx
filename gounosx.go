@@ -1,4 +1,8 @@
+// +build darwin
+
 package gounosx
+
+import "time"
 
 // AuthorizationOption ...
 type AuthorizationOption uint8
@@ -12,7 +16,7 @@ const (
 )
 
 // Notifier ...
-type Notifier struct {}
+type Notifier struct{}
 
 // RequestAuthorization ...
 func (*Notifier) RequestAuthorization(options ...AuthorizationOption) (bool, error) {
@@ -21,6 +25,13 @@ func (*Notifier) RequestAuthorization(options ...AuthorizationOption) (bool, err
 
 // AuthorizationStatus ...
 func (*Notifier) AuthorizationStatus() (bool, []AuthorizationOption) {
+	// TODO: Determine what to do with error
+	granted, options, _ := getNotificationSettings()
+	return granted, options
+}
+
+// Notify diplays the notification to the user once the deadline has been reached.
+func (*Notifier) Notify(nc NotificationContent, deadline time.Time) {
 	panic("not implemented")
 }
 
