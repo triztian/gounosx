@@ -18,7 +18,7 @@ import (
 )
 
 // requestAuthorization ...
-func requestAuthorization(options ...AuthorizationOption) (bool, error) { 
+func requestAuthorization(options ...AuthorizationOption) (bool, error) {
 
 	cOpts := make([]C.int, len(options))
 	for i := range options {
@@ -35,9 +35,9 @@ func getNotificationSettings() (bool, []AuthorizationOption, error) {
 
 	var (
 		cGranted *C.int
-		cOpts []C.int
+		cOpts    []C.int
 		cOptsLen *C.int
-		cErr *C.char
+		cErr     *C.char
 	)
 
 	if int(C.getNotificationSettings(cGranted, &cOpts[0], cOptsLen, cErr)) != 1 {
@@ -58,11 +58,43 @@ func registerNotificationCategories(cc ...Category) {
 	cCats := make([]C.Category, len(cc))
 
 	for _, c := range cc {
-		cCats = append(cCats, C.Category{
+		cCat := C.Category{
+			id:                            C.CString(c.ID),
+			hiddenPreviewsBodyPlaceholder: C.CString(c.HiddenPreviewsBodyPlaceholder),
+		}
 
-		})
+		for i := range c.Options {
+			cCat.options |= C.int(c.Options[i])
+		}
+
+		if len(c.Actions) > 0 {
+			cActs := (*[1 << 28]C.Action)(C.malloc(C.size_t(C.sizeof_Action * len(c.Actions))))
+			cCat.actionsN = C.size_t(len(c.Actions))
+
+			for i := range c.Actions {
+				act := C.Action{
+					id:    C.CString(c.Actions[i].ID),
+					title: C.CString(c.Actions[i].Title),
+				}
+				cActs[i] = act
+			}
+
+			cCat.actions = &cActs[0]
+		}
+
+		cCats = append(cCats, cCat)
 	}
-	
-	C.registerNotificationCategories(cCats, C.int(len(cc)))
 
+	C.registerNotificationCategories(&cCats[0], C.int(len(cc)))
+
+}
+
+func toCInts(nn ...uint8) ([]C.int, C.int) {
+
+	ns := make([]C.int, len(nn))
+	for i := range nn {
+		ns[i] = C.int(nn[i])
+	}
+
+	return ns, C.int(len(nn))
 }

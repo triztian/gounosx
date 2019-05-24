@@ -2,6 +2,8 @@
 #ifndef _BRIDGE_H_
 #define _BRIDGE_H_
 
+#include "stdlib.h"
+
 typedef struct {
 	char *id;
 	char *title;
@@ -13,8 +15,8 @@ typedef struct {
 	char *id;
 	char *hiddenPreviewsBodyPlaceholder;
 	int options;
+	Action *actions;
 	size_t actionsN;
-	Action actions[];
 } Category;
 
 #endif

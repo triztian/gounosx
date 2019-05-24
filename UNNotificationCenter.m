@@ -48,7 +48,7 @@ BOOL registerNotificationCategories(Category categories[], int categoriesN) {
 				categoryWithIdentifier: @"UNIQUE_ID"
 				actions: [NSMutableArray arrayWithCapacity: categories[c].actionsN]
 				intentIdentifiers: [NSMutableArray arrayWithCapacity:0]
-				options: (UNNotificationCategoryOptionNone)
+				options: categories[c].options
 			];
 
 			for (size_t a = 0; a < categories[c].actionsN; a++ ) {
