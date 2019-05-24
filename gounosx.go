@@ -30,30 +30,41 @@ func (*Notifier) AuthorizationStatus() (bool, []AuthorizationOption) {
 	return granted, options
 }
 
+// AddCategories ...
+func (*Notifier) AddCategories(cats ...Category) <-chan Response {
+	return nil
+}
+
 // Notify diplays the notification to the user once the deadline has been reached.
-func (*Notifier) Notify(nc NotificationContent, deadline time.Time) {
+func (*Notifier) Notify(content Content, deadline time.Time) {
 	panic("not implemented")
 }
 
-// NotificationAction ...
-type NotificationAction struct {
+// Action ...
+type Action struct {
 	ID      string
 	Title   string
 	Options []uint8
 }
 
-// NotificationCategory ...
-type NotificationCategory struct {
+// Category ...
+type Category struct {
 	ID                            string
-	Actions                       []NotificationAction
+	Actions                       []Action
 	HiddenPreviewsBodyPlaceholder string
 	Options                       []uint8
 }
 
-// NotificationContent ...
-type NotificationContent struct {
+// Content ...
+type Content struct {
 	Title      string
 	Body       string
 	UserInfo   map[string]string
 	CategoryID string
+}
+
+// Response ...
+type Response struct {
+	ActionID string
+	UserInfo map[string]string
 }
