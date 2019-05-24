@@ -38,26 +38,46 @@ BOOL getNotificationSettings(int *granted, int options[], int *optionsCount, cha
 	return YES;
 }
 
-BOOL registerNotificationCategories(Category categories[], int categoriesN) {
+void registerNotificationCategories(Category categories[], int categoriesN) {
 	if (@available(macOS 10.14, *)) {
 		UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
 
+		NSMutableSet *unCategories = [NSMutableSet setWithCapacity: categoriesN];
 		for (size_t c = 0; c < categoriesN; c++) {
 
+			NSMutableArray *categoryActions = [NSMutableArray arrayWithCapacity: categories[c].actionsN];
+
+			for (size_t a = 0; a < categories[c].actionsN; a++ ) {
+
+				UNNotificationActionOptions	actionOptions = UNNotificationActionOptionNone;
+
+				for (size_t o = 0; o < categories[c].actions[a].optionsN; o++) {
+					actionOptions |= (UNNotificationActionOptions)categories[c].actions[a].options;
+				}
+
+				UNNotificationAction *action = [UNNotificationAction 
+					actionWithIdentifier: [NSString stringWithUTF8String: categories[c].actions[a].id]
+					title: [NSString stringWithUTF8String: categories[c].actions[a].title]
+					options: actionOptions
+				]; 
+
+				[categoryActions addObject: action];
+
+			}
+
 			UNNotificationCategory *category = [UNNotificationCategory 
-				categoryWithIdentifier: @"UNIQUE_ID"
-				actions: [NSMutableArray arrayWithCapacity: categories[c].actionsN]
+				categoryWithIdentifier: [NSString stringWithUTF8String: categories[c].id]
+				actions: categoryActions
 				intentIdentifiers: [NSMutableArray arrayWithCapacity:0]
 				options: categories[c].options
 			];
 
-			for (size_t a = 0; a < categories[c].actionsN; a++ ) {
-				// UNNotificationAction *action = [[UNNotificationAction alloc]];
-			}
+			[unCategories addObject: category];
 		}
+
+		[center setNotificationCategories: unCategories];
 	}
 
-	return NO;
 }
 
 // ---------
