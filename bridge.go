@@ -3,12 +3,14 @@
 package gounosx
 
 /*
-#cgo darwin CFLAGS: -mmacosx-version-min=10.10 -D__MAC_OS_X_VERSION_MAX_ALLOWED=101400
-#cgo darwin CFLAGS: -Wunguarded-availability-new
+#cgo darwin CFLAGS: -mmacosx-version-min=10.10 -D__MAC_OS_X_VERSION_MAX_ALLOWED=101400 -Wunguarded-availability-new
 #cgo darwin LDFLAGS: -framework UserNotifications -framework Foundation
 
-int requestAuthorization(int[]);
+#include "bridge.h"
+
+int requestAuthorization(int[], int);
 int getNotificationSettings(int*, int[], int*, char*);
+void registerNotificationCategories(Category[], int);
 */
 import "C"
 import (
@@ -23,11 +25,12 @@ func requestAuthorization(options ...AuthorizationOption) (bool, error) {
 		cOpts[i] = C.int(options[i])
 	}
 
-	return int(C.requestAuthorization(&cOpts[0])) == 1, nil
+	return int(C.requestAuthorization(&cOpts[0], C.int(len(options)))) == 1, nil
 }
 
 // getNotificationSettings ...
 func getNotificationSettings() (bool, []AuthorizationOption, error) {
+
 	var options []AuthorizationOption
 
 	var (
@@ -46,4 +49,20 @@ func getNotificationSettings() (bool, []AuthorizationOption, error) {
 	}
 
 	return int(*cGranted) == 1, options, nil
+
+}
+
+// registerNotificationCategories ...
+func registerNotificationCategories(cc ...Category) {
+
+	cCats := make([]C.Category, len(cc))
+
+	for _, c := range cc {
+		cCats = append(cCats, C.Category{
+
+		})
+	}
+	
+	C.registerNotificationCategories(cCats, C.int(len(cc)))
+
 }
