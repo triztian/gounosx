@@ -40,19 +40,38 @@ func (*Notifier) Notify(content Content, deadline time.Time) {
 	panic("not implemented")
 }
 
+type ActionOption uint8
+
+const (
+	ActionOptionNone ActionOption = iota
+	ActionOptionAuthenticationRequired
+	ActionOptionDestructive
+	ActionOptionForeground
+)
+
 // Action ...
 type Action struct {
 	ID      string
 	Title   string
-	Options []uint8
+	Options []ActionOption
 }
+
+type CategoryOption uint8
+
+const (
+	CategoryOptionNone CategoryOption = iota
+	CategoryOptionCustomDismissAction
+	CategoryOptionCategoryOptionAllowInCarPlay
+	CategoryOptionHiddenPreviewsShowTitle
+	CategoryOptionHiddenPreviewsShowSubtitle
+)
 
 // Category ...
 type Category struct {
 	ID                            string
 	Actions                       []Action
 	HiddenPreviewsBodyPlaceholder string
-	Options                       []uint8
+	Options                       []CategoryOption
 }
 
 // Content ...
