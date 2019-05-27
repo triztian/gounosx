@@ -11,6 +11,7 @@ package gounosx
 int requestAuthorization(int[], int);
 int getNotificationSettings(int*, int[], int*, char*);
 void registerNotificationCategories(Category[], int);
+int addNotificationRequest(void);
 */
 import "C"
 import (
@@ -53,7 +54,7 @@ func getNotificationSettings() (bool, []AuthorizationOption, error) {
 }
 
 // registerNotificationCategories ...
-func registerNotificationCategories(cc ...Category) {
+func registerNotificationCategories(respCh chan<- Response, cc ...Category) {
 
 	cCats := make([]C.Category, len(cc))
 
@@ -86,6 +87,12 @@ func registerNotificationCategories(cc ...Category) {
 	}
 
 	C.registerNotificationCategories(&cCats[0], C.int(len(cc)))
+
+}
+
+func addNotificationRequest(req ...Request) {
+
+	C.addNotificationRequest()
 
 }
 

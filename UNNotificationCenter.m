@@ -80,6 +80,32 @@ void registerNotificationCategories(Category categories[], int categoriesN) {
 
 }
 
+BOOL addNotificationRequest(void) {
+	if (@available(macOS 10.14, *)) {
+
+		UNMutableNotificationContent *content = [[UNMutableNotificationContent alloc] init];
+		content.title = [NSString localizedUserNotificationStringForKey:@"Hello!" arguments:nil];
+		content.body = [NSString localizedUserNotificationStringForKey:@"Hello_message_body"
+			arguments:nil];
+		content.sound = [UNNotificationSound defaultSound];
+
+		// Deliver the notification in five seconds.
+		UNTimeIntervalNotificationTrigger* trigger = [UNTimeIntervalNotificationTrigger
+			triggerWithTimeInterval:5 repeats:NO];
+
+		UNNotificationRequest* request = [UNNotificationRequest requestWithIdentifier:@"FiveSecond"
+			content:content trigger:trigger];
+		
+		// Schedule the notification.
+		UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
+		[center addNotificationRequest:request withCompletionHandler: ^(NSError *error) {
+
+		}];
+
+	}
+	return NO;
+}
+
 // ---------
 
 /**

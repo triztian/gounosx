@@ -32,16 +32,28 @@ func (*Notifier) AuthorizationStatus() (bool, []AuthorizationOption) {
 
 // AddCategories ...
 func (*Notifier) AddCategories(cats ...Category) <-chan Response {
-	return nil
+
+	respCh := make(chan Response)
+
+	registerNotificationCategories(respCh, cats...)
+
+	return respCh
 }
 
 // Notify diplays the notification to the user once the deadline has been reached.
 func (*Notifier) Notify(content Content, deadline time.Time) {
+	addNotificationRequest()
+}
+
+// Schedule ...
+func (*Notifier) Schedule(content Content, every <-chan bool) {
 	panic("not implemented")
 }
 
+// ActionOption ...
 type ActionOption uint8
 
+// Action options
 const (
 	ActionOptionNone ActionOption = iota
 	ActionOptionAuthenticationRequired
@@ -56,8 +68,10 @@ type Action struct {
 	Options []ActionOption
 }
 
+// CategoryOption ...
 type CategoryOption uint8
 
+// Category options
 const (
 	CategoryOptionNone CategoryOption = iota
 	CategoryOptionCustomDismissAction
@@ -65,6 +79,11 @@ const (
 	CategoryOptionHiddenPreviewsShowTitle
 	CategoryOptionHiddenPreviewsShowSubtitle
 )
+
+// Request ...
+type Request struct {
+	Content Content
+}
 
 // Category ...
 type Category struct {
